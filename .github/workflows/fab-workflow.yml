@@ -14,30 +14,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Login to Azure using OIDC (No secrets!)
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: "451aae39-c3b6-4179-9d8c-154aeac02c08" # Your UAMI Client ID
-          tenant-id: "YOUR_TENANT_ID"  # Replace with your Tenant ID
-          subscription-id: "YOUR_SUBSCRIPTION_ID" # Replace with your Sub ID
+          client-id: "451aae39-c3b6-4179-9d8c-154aeac02c08" 
+          tenant-id: "d27e1d7c-3f35-4d28-a868-9e411f123b3a"  
+          subscription-id: "d6f33ba3-12b4-4225-b854-b85d080936f6" 
 
-      # 2. Install Python 3.13 (Native support!)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.13' 
 
-      # 3. Install Fabric CLI (Direct from GitHub)
       - name: Install Fabric CLI
         run: |
           pip install git+https://github.com/microsoft/fabric-cli.git
 
-      # 4. Run your command
-      # The Azure Login step above automatically sets the environment variables
-      # that 'fab auth login --identity' needs.
       - name: Run Fabric List
         run: |
           # We use --identity which picks up the OIDC token from the Azure Login step
           fab auth login --identity
-          fab workspace list
+          fab ls
