@@ -36,6 +36,12 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+        
+      # Create .python_packages directory for Flex Consumption
+      - name: Create Python packages directory
+        run: |
+          mkdir -p .python_packages/lib/site-packages
+          pip install --target=".python_packages/lib/site-packages" -r requirements.txt
 
       # Optional: Add step to run tests here
 
@@ -82,4 +88,6 @@ jobs:
           app-name: 'fabric-mgmnt'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          scm-do-build-during-deployment: false
+          enable-oryx-build: false
           
