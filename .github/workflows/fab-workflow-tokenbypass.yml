@@ -41,7 +41,7 @@ jobs:
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com" --query accessToken -o tsv)
           export FAB_TOKEN="$TOKEN"
           export FABRIC_ACCESS_TOKEN="$TOKEN" 
-          echo "Token injected. 
+          echo "Token injected."
           fab config set encryption_fallback_enabled true
           fab ls
           fab mkdir action.workspace -P capacityName=fcapa1
