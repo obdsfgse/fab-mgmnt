@@ -40,7 +40,7 @@ jobs:
         run: |
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com" --query accessToken -o tsv)
           export FAB_TOKEN="$TOKEN"
-          export FABRIC_ACCESS_TOKEN="$TOKEN" 
+          export FAB_TOKEN_ONELAKE="$TOKEN" 
           echo "Token injected."
           fab config set encryption_fallback_enabled true
           fab ls
