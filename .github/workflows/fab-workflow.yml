@@ -1,7 +1,12 @@
 name: Fabric Automation
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+
+env:
+  CLIENT_ID: '8603d75c-5270-40ae-9df4-5e43ca13b965'
+  TENANT_ID: 'd27e1d7c-3f35-4d28-a868-9e411f123b3a'
+  SUBSCRIPTION_ID: 'd6f33ba3-12b4-4225-b854-b85d080936f6'
 
 permissions:
   id-token: write  # REQUIRED for OIDC authentication
@@ -17,9 +22,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: "8603d75c-5270-40ae-9df4-5e43ca13b965" 
-          tenant-id: "d27e1d7c-3f35-4d28-a868-9e411f123b3a"  
-          subscription-id: "d6f33ba3-12b4-4225-b854-b85d080936f6" 
+          client-id: ${{ env.CLIENT_ID }}
+          tenant-id: ${{ env.TENANT_ID }}
+          subscription-id: ${{ env.SUBSCRIPTION_ID }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -33,5 +38,5 @@ jobs:
       - name: Run Fabric List
         run: |
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com" --query accessToken -o tsv)
-          fab auth login --token "$TOKEN"
+          fab auth login -u ${{ env.CLIENT_ID }} --federated-token "$TOKEN" --tenant ${{ env.TENANT_ID }}
           fab ls
