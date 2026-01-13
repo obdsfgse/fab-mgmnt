@@ -38,5 +38,6 @@ jobs:
       - name: Run Fabric List
         run: |
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com" --query accessToken -o tsv)
+          fab config set encryption_fallback_enabled true
           fab auth login -u ${{ env.CLIENT_ID }} --federated-token "$TOKEN" --tenant ${{ env.TENANT_ID }}
           fab ls
