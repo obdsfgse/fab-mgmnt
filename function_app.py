@@ -21,44 +21,36 @@ def fab_auth_login(req: func.HttpRequest) -> func.HttpResponse:
     try:
         req_body = req.get_json()
         client_id = req_body.get("client_id")
+        credential = None
         
-        # If no client_id provided, try to get it from Azure Identity
-        if not client_id:
-            try:
-                logging.info("Retrieving Azure Identity credentials...")
-                # Try to use DefaultAzureCredential which handles user-assigned managed identities
-                credential = DefaultAzureCredential()
-                logging.info("Successfully obtained Azure Identity credential")
-            except Exception as e:
-                logging.error(f"Failed to obtain Azure Identity: {str(e)}")
-                return func.HttpResponse(
-                    json.dumps({
-                        "error": "Failed to obtain Azure Identity credentials",
-                        "details": str(e)
-                    }),
-                    status_code=401,
-                    mimetype="application/json"
-                )
-        else:
-            # If client_id is provided, use ManagedIdentityCredential
-            try:
+        # Initialize Azure Identity credentials
+        try:
+            if client_id:
+                # If client_id is provided, use ManagedIdentityCredential
                 logging.info(f"Using provided client_id for managed identity")
                 credential = ManagedIdentityCredential(client_id=client_id)
                 logging.info(f"Successfully initialized ManagedIdentityCredential")
-            except Exception as e:
-                logging.error(f"Failed to initialize ManagedIdentityCredential: {str(e)}")
-                return func.HttpResponse(
-                    json.dumps({
-                        "error": "Failed to initialize managed identity credential",
-                        "details": str(e)
-                    }),
-                    status_code=401,
-                    mimetype="application/json"
-                )
-        
-        if not client_id:
+            else:
+                # Use DefaultAzureCredential which handles user-assigned managed identities
+                logging.info("Retrieving Azure Identity credentials...")
+                credential = DefaultAzureCredential()
+                logging.info("Successfully obtained Azure Identity credential")
+        except Exception as e:
+            logging.error(f"Failed to obtain Azure Identity: {str(e)}")
             return func.HttpResponse(
-                json.dumps({"error": "client_id is required"}),
+                json.dumps({
+                    "error": "Failed to obtain Azure Identity credentials",
+                    "details": str(e)
+                }),
+                status_code=401,
+                mimetype="application/json"
+            )
+        
+        # If still no client_id, we need one to pass to fab command
+        if not client_id:
+            logging.warning("No client_id available for fab command")
+            return func.HttpResponse(
+                json.dumps({"error": "client_id is required or must be available via Azure Identity"}),
                 status_code=400,
                 mimetype="application/json"
             )
@@ -144,3 +136,23 @@ def fab_auth_login(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500,
             mimetype="application/json"
         )
+
+
+@app.function_name("Hello")
+@app.route(route="hello", methods=["GET"])
+def hello(req: func.HttpRequest) -> func.HttpResponse:
+    """
+    Simple hello endpoint to verify the function app is running.
+    """
+    name = req.params.get("name")
+    if not name:
+        name = "World"
+    
+    return func.HttpResponse(
+        json.dumps({
+            "message": f"Hello, {name}!",
+            "status": "success"
+        }),
+        status_code=200,
+        mimetype="application/json"
+    )
