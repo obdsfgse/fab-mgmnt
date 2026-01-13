@@ -35,5 +35,5 @@ jobs:
           # We use --identity which picks up the OIDC token from the Azure Login step
           fab config set encryption_fallback_enabled true
           fab config set mode command_line
-          fab auth login --identity
+          fab auth login --identity -u "8603d75c-5270-40ae-9df4-5e43ca13b965" 
           fab ls
