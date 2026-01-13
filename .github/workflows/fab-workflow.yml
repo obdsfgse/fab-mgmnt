@@ -9,7 +9,7 @@ env:
   SUBSCRIPTION_ID: 'd6f33ba3-12b4-4225-b854-b85d080936f6'
 
 permissions:
-  id-token: write  # REQUIRED for OIDC authentication
+  id-token: write 
   contents: read
 
 jobs:
