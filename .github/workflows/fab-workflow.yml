@@ -38,12 +38,7 @@ jobs:
 
       - name: Run Fabric List
         run: |
-          # Retrieve the OIDC token from the previous step
           OIDC_TOKEN="${{ steps.oidc.outputs.token }}"
-          
-          fab config set encryption_fallback_enabled true
-          
-          # Pass the OIDC token, NOT the Azure Access Token
+          fab config set encryption_fallback_enabled true         
           fab auth login -u ${{ env.CLIENT_ID }} --federated-token "$OIDC_TOKEN" --tenant ${{ env.TENANT_ID }}
-          
           fab ls
