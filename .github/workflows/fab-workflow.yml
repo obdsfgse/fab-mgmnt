@@ -32,8 +32,6 @@ jobs:
 
       - name: Run Fabric List
         run: |
-          # We use --identity which picks up the OIDC token from the Azure Login step
-          fab config set encryption_fallback_enabled true
-          fab config set mode command_line
-          fab auth login --identity -u "8603d75c-5270-40ae-9df4-5e43ca13b965" 
+          TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com" --query accessToken -o tsv)
+          fab auth login --token "$TOKEN"
           fab ls
