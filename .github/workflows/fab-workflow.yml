@@ -42,4 +42,4 @@ jobs:
           fab config set encryption_fallback_enabled true         
           fab auth login -u ${{ env.CLIENT_ID }} --federated-token "$OIDC_TOKEN" --tenant ${{ env.TENANT_ID }}
           fab ls
-          fab mkdir action.Workspace
+          fab mkdir action.workspace -P capacityName=fcapa1
